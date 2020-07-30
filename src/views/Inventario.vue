@@ -59,7 +59,7 @@
         <label>Etiquetas<input type="text" placeholder="Buscar... arrastrar y soltar" v-model="ArticulosFormulario.Etiqueta"></label>
         
         <div>
-            <button class="btn contenido GuardarFor">Guardar</button>
+            <button class="btn contenido GuardarFor" type="submit">Guardar</button>
         </div>
         
          
@@ -77,7 +77,7 @@
                 <th scope="col">Precio</th>
             </tr>
         </thead>
-        <tbody v-for="(i, index) in ArticulosArray" :key="index">
+        <tbody v-for="(i, index) in invent" :key="index">
             <tr>
                 <th scope="row">{{i.CodigoArticulo}}</th>
                 <td>{{i.Nombre}}</td>
@@ -106,8 +106,12 @@
 export default {
   data () {
     return { 
+        item: {}, //post? de echo no, el objeto con el v-model es ArticulosFormulario
+        invent: [], //view get
+        agregar: true,
         Search:'',       
         disponible: 'si', //:value para expresion, value para cadena de texto 
+        //para el post
         ArticulosFormulario: {Nombre: '',Descripcion:'',
         //Precios
         PrecioBruto: '',Iva:'',PrecioArticulo:'',
@@ -121,13 +125,13 @@ export default {
         TipoProducto:'',Proveedor:'',Etiqueta:''
       },
       //Nombre:"",
-      ArticulosArray: [{
+      /*ArticulosArray: [{
         CodigoArticulo: '1212',
         Nombre: 'Palta',
         Disponible: 'si',
         PrecioBruto: '13,67'
       }
-      ],
+      ],*/
       CopyArray:[],
       ActivarAgregar: false, //formulario agregar desactivado,
       
@@ -141,9 +145,50 @@ export default {
       this.CopyArray = this.ArticulosArray; //Guardo en array porque con filter me borra los articulos.
       //console.log(this.CopyArray)
   },
+  created(){  //view get
+    this.ArticulosArray();
+  },
   methods:{
-      AgregarArticulo: function(){
-          let {Nombre, Descripcion, PrecioBruto, Iva, PrecioArticulo, CodigoArticulo, CodigoBarra, Politica, Cantidad, Color, Medidas, Peso, FechaIngreso, FechaVencimiento, Disponible, SeleccionCanal, TipoProducto, Proveedor, Etiqueta} = this.ArticulosFormulario;
+    /* AgregarArticulo() {    
+         axios({
+      method: 'post',
+      url: '/inventario',
+      data: {
+        username: this.state.username,
+        password: this.state.password,
+      },
+      validateStatus: (status) => {
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        // this is now called!
+    });
+    },*/
+      AgregarArticulo(){
+          //console.log(this.item);
+          this.axios.post('/inventario', this.ArticulosFormulario)
+          .then(res => {
+                console.log(res);
+              this.invent.unshift(res.data)
+              })
+            .catch(function (error){        //Esta de acá
+            console.log(error.toJSON);  //Esta de acá
+            console.log('en inventario.vue')
+        });
+      },
+
+     /* AgregarArticulo(item){
+        this.axios.post('/inventario', item)
+        .then(res => {
+            //Agregar al inicio de nuestro array invent
+            this.invent.unshift(res.data);
+        })
+        .catch( e => console.log(e))
+        },*/
+        /*
+         let {Nombre, Descripcion, PrecioBruto, Iva, PrecioArticulo, CodigoArticulo, CodigoBarra, Politica, Cantidad, Color, Medidas, Peso, FechaIngreso, FechaVencimiento, Disponible, SeleccionCanal, TipoProducto, Proveedor, Etiqueta} = this.ArticulosFormulario;
           Disponible= this.disponible,
           this.ArticulosArray.push({
               Nombre, Descripcion, Disponible, PrecioBruto, Iva, PrecioArticulo, CodigoArticulo, CodigoBarra, Politica, Cantidad, Color, Medidas, Peso, FechaIngreso, FechaVencimiento, Disponible, SeleccionCanal, TipoProducto, Proveedor, Etiqueta
@@ -163,7 +208,19 @@ export default {
             //Organizacion
             this.ArticulosFormulario.TipoProducto='',this.ArticulosFormulario.Proveedor='',
             this.ArticulosFormulario.Etiqueta=''
-      },
+            */
+      
+    ArticulosArray(){ //view get
+      this.axios.get('/inventario')
+      .then((response) => {
+        // console.log(response.data)
+        this.invent = response.data; //view get
+      })
+      .catch((e)=>{
+        console.log('error de get /inventario.vue  ' + e);
+      })
+    },
+  
       ActivarFormAgregar(){
           this.ActivarAgregar= true          
       },

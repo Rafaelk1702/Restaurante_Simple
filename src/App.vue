@@ -4,7 +4,7 @@
       <router-link to="/">Inicio</router-link>
       <router-link to="/Inventario">Inventario</router-link>
       <router-link to="/about">Nosotros</router-link>
-      
+      <router-link to="/articulo">Articulos</router-link>
     </div>
     <router-view/>
   </div>

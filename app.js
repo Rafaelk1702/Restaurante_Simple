@@ -20,6 +20,7 @@ mongoose.connect(uri, options).then(
   /** handle initial connection error */
   err => { console.log(err) }
 );
+
 app.use(morgan('tiny'));
 app.use(cors());
 //json
@@ -28,15 +29,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
 // Middleware para Vue.js router modo history
-const history = require('connect-history-api-fallback');
-app.use(history());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/api', require('./router/datainventario'));
+//const history = require('connect-history-api-fallback');
+//app.use(history());
+app.use(express.static(path.join(__dirname, 'public'))); //si borro esto me devuelve bien la busqueda get, pero lo malo es que me devuelve el index
+app.use('/api', require('./routes/datainventario'));
+//app.use('/api',routes)
+/*app.get('/a', function (req, res) {
+  res.send('Hello World!');
+});*/
 
-//app.get('/', function (req, res) {
-  //res.send('Hello World!');
-//});
-
-app.listen(3000, function () {
+app.listen(process.env.port || 3000, function () {
   console.log('Example app listening on port 3000!');
 });
